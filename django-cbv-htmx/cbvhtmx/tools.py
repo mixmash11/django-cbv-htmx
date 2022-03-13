@@ -8,6 +8,9 @@ logger = logging.getLogger(__name__)
 
 
 def operation(op):
+    """
+    Logging for methods
+    """
     def operation_decorator(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
@@ -30,6 +33,9 @@ def operation(op):
 
 
 def superuser_required(func):
+    """
+    A test for Django views requiring the user to be a super user
+    """
     @wraps(func)
     def test_user(request, *args, **kwargs):
         if request.user.is_superuser:

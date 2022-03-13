@@ -6,7 +6,7 @@ import logging
 
 from pandas.tests.io.excel.test_xlsxwriter import xlsxwriter
 
-from mtk_web_mgmt.cbvhtmx.tools import operation
+from .tools import operation
 
 logger = logging.getLogger(__name__)
 

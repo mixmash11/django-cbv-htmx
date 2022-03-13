@@ -1,3 +1,5 @@
+# /templatetags/query_extras.py
+
 from django import template
 from django.http.request import QueryDict
 
