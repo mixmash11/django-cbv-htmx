@@ -1,0 +1,20 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+django = {version=">=3.2", index="pypi"}
+pandas = {version=">=1.0", index="pypi"}
+django-cbv-htmx = {editable = true, path = "./django-cbv-htmx"}
+
+[dev-packages]
+pytest = {version="~=7.0", index="pypi"}
+pytest-django = {version="~=4.5", index="pypi"}
+django-taggit = {version="~=2.1", index="pypi"}
+twine = {version="*", index="pypi"}
+build = {version="*", index="pypi"}
+setuptools = {version=">=42", index="pypi"}
+
+[requires]
+python_version = "3.9"
