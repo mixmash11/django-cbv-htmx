@@ -1,0 +1,71 @@
+<!--DETAIL TEMPLATE-->
+
+<!--DETAIL VIEW-->
+{% extends "base.html" %}
+
+
+{% block title %}{% if not view.hx %}{{ OBJECT TITLE }}{% endif %}{% endblock title %}
+
+
+{% block content %}
+<div class="container-fluid">
+    <div class="jumbotron">
+        <h2>{{ OBJECT TITLE }}</h2>
+    </div>
+    {% include "HTMX TEMPLATE" %}
+</div>
+{% endblock content %}
+
+<!--HTMX DETAIL-->
+<div id="context-{{ OBJECT SLUG }}" class="container border rounded p-4">
+    <!--CONTEXT BUTTONS-->
+    <div id="actions-{{ OBJECT SLUG }}" class="text-center">
+        <!--STANDALONE PAGE BUTTON-->
+        {% if view.hx %}
+        <a class="btn btn-secondary" href="{% url 'DETAIL URL' %}">
+            Übersicht
+        </a>
+        {% endif %}
+        <!--UPDATE BUTTON-->
+        {% if user.is_superuser %}
+        <button
+                hx-get="{% url 'UPDATE URL' %}"
+                hx-target="#context-{{ OBJECT SLUG }}"
+                hx-swap="innerHTML"
+                hx-select="#context-{{ OBJECT SLUG }}"
+                class="btn btn-warning mh1"
+                type="button"
+        >
+            Bearbeiten
+        </button>
+        {% endif %}
+    </div>
+    {% if user.is_superuser or view.hx %}
+    <hr class="my-4">
+    {% endif %}
+    <!--OBJECT DATA-->
+    <div id="data-{{ OBJECT SLUG }}">
+        <div class="table">
+            <table class="table table-striped table-lg">
+                <tbody>
+                <tr>
+                    <th scope="row">{{OBJECT TITLE FIELD}}</th>
+                    <th scope="row">{{ OBJECT TITLE }}</th>
+                </tr>
+                <tr>
+                    <td>{{FIELD NAME}}</td>
+                    <td>{{FIELD VALUE}}</td>
+                </tr>
+                <tr>
+                    <td>Tags</td>
+                    <td>
+                        {% for tag in TAG FIELD %}
+                        <span class="badge badge-pill badge-info">{{ tag }}</span>
+                        {% endfor %}
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

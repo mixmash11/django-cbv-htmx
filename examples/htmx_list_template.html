@@ -1,0 +1,251 @@
+<!--HTMX TEMPLATE - LIST VIEW-->
+
+{% extends "base.html" %}
+{% load static %}
+{% load humanize %}
+{% load query_extras %}
+{% block title %}Liste {{OBJECT TYPE}}{% endblock %}
+
+<!--Boxes-->
+<!--Row Container-->
+<div class="card-deck p-4">
+    <!--Title Box-->
+    <div class="card">
+        <h5 class="card-header">Beschreibung</h5>
+        <div class="card-body">
+            <h1 class="card-title">{{TABLE TITLE}}</h1>
+            <p class="card-text">{{TABLE DESCRIPTION}}</p>
+        </div>
+    </div>
+    <!--Search Box-->
+    <div class="card">
+        <h5 class="card-header">Filter</h5>
+        <div class="card-body">
+            <h2 class="card-title text-center">{{SEARCH TITLE}}</h2>
+            <p class="card-text">
+                {{SEARCH DESCRIPTION}}
+            </p>
+        </div>
+        <div class="card-footer">
+            <div class="form-row align-items-center">
+                <div class="col-9">
+                    <label class="sr-only" for="searchInput">Suchen</label>
+                    <input type="text" class="form-control" id="searchInput"
+                           placeholder="Suchen..."
+                           name="q"
+                           value="{{ view.querydict|get_q }}"
+                           hx-get="{% url 'LIST URL' %}{{ view.querydict|drop_q }}"
+                           hx-trigger="keyup changed delay:500ms, q"
+                           hx-target="#list-content"
+                           hx-swap="innerHTML"
+                           hx-indicator="#spinner-search"
+                           hx-push-url="true"
+                    >
+                </div>
+                <div class="col-3">
+                    <img id="spinner-search" class="htmx-indicator" src="{% static 'images/oval.svg' %}"
+                         alt="loading...">
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--Dropdown Box-->
+    <div class="card">
+        <h5 class="card-header">Filter</h5>
+        <div class="card-body">
+            <h2 class="card-title text-center">{{FILTER TITLE}}</h2>
+            <p class="card-text">{{FILTER TEXT}}</p>
+        </div>
+        <div class="text-center card-footer">
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
+                        data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">
+                    {{DROPDOWN DEFAULT}}
+                </button>
+                <div class="dropdown-menu pre-scrollable" aria-labelledby="dropdownMenuButton">
+                    {% for ENTRY in LIST %}
+                    <a class="dropdown-item" href="{% url 'DROPDOWN FILTER URL' %}">{{DROPDOWN ENTRY LABEL}}</a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--New Item Box-->
+    {% if user.is_superuser %}
+    <div class="card">
+        <h5 class="card-header">Verwaltung</h5>
+        <div class="card-body">
+            <h2 class="card-title text-center">{{NEW ITEM TITLE}}</h2>
+            <p class="card-text">
+                {{NEW ITEM DESCRIPTION}}
+            </p>
+        </div>
+        <div class="text-center card-footer">
+            <button id="button-new" class="btn btn-primary"
+                    data-toggle="collapse"
+                    data-target="#details-new"
+                    aria-expanded="false"
+                    aria-controls="details-new"
+                    hx-get="{% url 'ADD OBJECT URL' %}"
+                    hx-target="#context-new"
+                    hx-swap="innerHTML"
+                    hx-select="#context-new"
+                    hx-indicator="#spinner-{{ ITEM SLUG }}"
+            >
+                {{BUTTON LABEL}}
+            </button>
+        </div>
+    </div>
+    {% endif %}
+    <!--Export Box-->
+    <div class="card">
+        <h5 class="card-header">Datei I/O</h5>
+        <div class="card-body">
+            <h2 class="card-title text-center">{{EXPORT TITLE}}</h2>
+            <p class="card-text">{{EXPORT DESCRIPTION}}</p>
+        </div>
+        <div class="card-footer">
+            <div id="export-buttons" class="text-center">
+                <a href="{% url 'EXPORT URL' %}?{{ view.querydict|default:'' }}"
+                   class="btn btn-primary"
+                   role="button">{{FILE TYPE}}</a>
+            </div>
+        </div>
+    </div>
+    <!--Import Box-->
+    {% if user.is_superuser %}
+    <div class="card">
+        <h5 class="card-header">Datei I/O</h5>
+        <div class="card-body">
+            <h2 class="card-title text-center">{{IMPORT TITLE}}</h2>
+            <p class="card-text">{{IMPORT DESCRIPTION}}</p>
+        </div>
+        <div class="text-center card-footer">
+            <a href="{% url 'IMPORT URL' %}" class="btn btn-primary" role="button">{{FILE TYPE}}</a>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!--Table Section-->
+<hr>
+<!--Result Count-->
+<p id="result-count" class="lead">{{ page_obj.paginator.count|intcomma }} Ergebnisse</p>
+<!--Table-->
+<div class="table-responsive">
+    <table class="table">
+        <!--Table Header-->
+        <thead class="thead-light">
+        <tr id="header-row">
+            <!--Column Header (Dynamic)-->
+            <th scope="col">
+                <a href="{% url 'LIST URL' %}?{{ view.querydict|append_ordering:'FIELD NAME' }}">{{FIELD NAME}}
+                    <span id="ordering-arrow-FIELD NAME">
+                  {% if view.ordering == "FIELD NAME" %}↓{% endif %}
+                  {% if view.ordering == "-FIELD NAME" %}↑{% endif %}
+                </span>
+                </a>
+            </th>
+            <!--Column Header (Static)-->
+            <th scope="col">{{FIELD NAME}}</th>
+            <!--Column Header (Button/Empty)-->
+            <th scope="col"></th>
+        </tr>
+        </thead>
+        <!--New Item Row-->
+        <tbody id="new-content">
+        <!--New Item Row Details-->
+        <tr id="details-new" class="collapse">
+            <td colspan="4">
+                <div id="context-new">
+                    <div class="text-center">
+                        <img id="spinner-new" src="{% static 'images/oval.svg' %}" alt="loading...">
+                    </div>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+        <!--HTMX List Body-->
+        <tbody id="list-content">
+        {% include "{{HTMX LIST TEMPLATE FILE}}" %}
+        </tbody>
+    </table>
+</div>
+
+
+
+<!--HTMX TABLE TEMPLATE-->
+{% for OBJECT in OBJECT_LIST %}
+<!--OBJECT ROW-->
+<tr id="entry-{{ computer.slug }}">
+    <th scope="row">{{ OBJECT TITLE }}</th>
+    <td>{{ OBJECT FIELD }}</td>
+    <!--EXPAND BUTTON-->
+    <td>
+        <button
+                id="button-{{ computer.slug }}"
+                class="btn btn-primary"
+                hx-get="{% url 'DETAIL URL' %}"
+                hx-target="#context-{{ OBJECT SLUG }}"
+                hx-swap="innerHTML"
+                hx-select="#context-{{ OBJECT SLUG }}"
+                hx-indicator="#spinner-{{ OBJECT SLUG }}"
+                data-toggle="collapse"
+                data-target="#details-{{ OBJECT SLUG }}"
+                aria-expanded="false"
+                aria-controls="details-{{ OBJECT SLUG }}"
+                _="install ToggleCollapse"
+        >
+            Anzeigen
+        </button>
+    </td>
+</tr>
+<!--OBJECT DETAIL ROW-->
+<tr id="details-{{ computer.slug }}" class="collapse">
+    <td colspan="4">
+        <div id="context-{{ OBJECT SLUG }}">
+            <div class="text-center">
+                <img id="spinner-{{ OBJECT SLUG }}" src="{% static 'images/oval.svg' %}" alt="loading...">
+            </div>
+        </div>
+    </td>
+</tr>
+{% endfor %}
+<!--INFINITE SCROLL ROW-->
+{% elif page_obj.has_next %}
+<tr id="next-section"
+    hx-get="{% url 'URL' %}?{{ view.querydict|append_page:page_obj.next_page_number }}"
+    hx-trigger="intersect"
+    hx-swap="outerHTML"
+    hx-indicator="#spinner-load">
+    <td colspan="4">
+        <div class="text-center">
+            <img id="spinner-load" src="{% static 'images/oval.svg' %}" alt="loading...">
+        </div>
+    </td>
+</tr>
+{% endif %}
+<!--OUT OF BOUND SWAP OBJECTS-->
+<!--UPDATED RESULT COUNT-->
+{% if view.hx %}
+<p id="result-count" class="lead" hx-swap-oob="true">{{ page_obj.paginator.count|intcomma }} Ergebnisse</p>
+{% endif %}
+{% if view.hx and view.querydict and OBJECT LIST %}
+<!--UPDATED HEADER ROW-->
+<tr id="header-row" hx-swap-oob="true">
+    <th scope="col">
+        <a href="{% url 'URL' %}?{{ view.querydict|append_ordering:'FIELD NAME' }}">Rechnername
+            <span id="ordering-arrow-FIELD NAME">
+            {% if view.ordering == "FIELD NAME" %}↓{% endif %}
+            {% if view.ordering == "-FIELD NAME" %}↑{% endif %}
+          </span>
+        </a>
+    </th>
+</tr>
+<!--UPDATED EXPORT BUTTONS-->
+<div id="export-buttons" class="text-center" hx-swap-oob="true">
+    <a href="{% url 'URL' %}?{{ view.querydict|default:'' }}" class="btn btn-primary"
+       role="button">{{FILE TYPE}}</a>
+</div>
+{% endif %}

@@ -15,6 +15,10 @@
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/django-cbv-htmx" isTestSource="false" />
+      <excludeFolder url="file://$MODULE_DIR$/django-cbv-htmx/build/lib" />
+      <excludeFolder url="file://$MODULE_DIR$/django-cbv-htmx/cbvhtmx/django_cbv_htmx.egg-info" />
+      <excludeFolder url="file://$MODULE_DIR$/django-cbv-htmx/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/django-cbv-htmx/django_cbv_htmx.egg-info" />
     </content>
     <orderEntry type="jdk" jdkName="Pipenv (django-cbv-htmx)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
