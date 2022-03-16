@@ -15,6 +15,7 @@ django-taggit = {version="~=2.1", index="pypi"}
 twine = {version="*", index="pypi"}
 build = {version="*", index="pypi"}
 setuptools = {version=">=42", index="pypi"}
+django-crispy-forms = "~=1.14"
 
 [requires]
-python_version = "3.9"
+python_version = "3"
